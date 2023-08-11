@@ -36,7 +36,7 @@ backend bk_web_{{ config.source_port }}
     balance {{ algorithm }}
     mode tcp
 {% for target in targets %}
-    server {{ target.name }} {{ target.ip }} {% if config.health_check %} check  {% endif %}{{''}} {% if config.proxy %} send-proxy  {% endif %}{{''}}
+    server {{ target.name }} {{ target.ip }}:{{ config.destination_port }} {% if config.health_check %} check  {% endif %}{{''}} {% if config.proxy %} send-proxy  {% endif %}{{''}}
 {% endfor %}
 
 {% endfor %}
