@@ -18,13 +18,13 @@ defaults
     timeout server  50000
 
 listen stats
-    bind *:65000
+    bind *:{{ port }}
     mode http
     stats enable
     stats hide-version
     stats realm Haproxy\ Statistics
     stats uri /stats
-    stats auth admin:admin123
+    stats auth admin:{{ password }}
 
 {% for config in configs %}
 frontend ft_web_{{ config.source_port }}
