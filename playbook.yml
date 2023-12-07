@@ -9,15 +9,28 @@
         state: present
         update_cache: yes
 
+    - name: check if admin exists
+      stat:
+        path: /root/dataplaneapi_2.8.4_linux_amd64.deb
+      register: adminplane_exists
+
+    - name: Install haproxy dataplaneapi
+      shell: |
+        curl -JLO https://github.com/haproxytech/dataplaneapi/releases/download/v2.8.4/dataplaneapi_2.8.4_linux_amd64.deb
+        sudo dpkg -i dataplaneapi_2.8.4_linux_amd64.deb
+      notify: Restart HAProxy
+      when: not adminplane_exists.stat.exists
+
     - name: Copy HAProxy config file
       template:
         src: haproxy.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
       notify: Restart HAProxy
 
-    - name: Read Haproxy config
-      ansible.builtin.command:
-        cmd: haproxy -c -f /etc/haproxy/haproxy.cfg
+    - name: Copy HAProxy Admin config file
+      template:
+        src: dataplaneapi.yml.j2
+        dest: /etc/haproxy/dataplaneapi.yml
       notify: Restart HAProxy
 
   handlers:
